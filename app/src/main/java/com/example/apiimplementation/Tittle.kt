@@ -39,14 +39,18 @@ lateinit var recyclerView:RecyclerView
                 val dataResponse = response.body()
                 val dataList = dataResponse?.products
                 val dataString = StringBuilder()
-                if(dataList != null){
-                    for(data in dataList){
-                        dataString.append(data.title + " ")
+                val tittleData = dataList?.let { Array<String>(it.size){""} }
+                if(dataList != null) {
+                    for ((i, data) in dataList.withIndex()) {
+                        tittleData?.set(i, data.title)
                     }
                 }
-
-                binding.textView.text = dataString
                 Toast.makeText(context,"Data Loaded", Toast.LENGTH_SHORT).show()
+                recyclerView = binding.recyclerViewForData
+                recyclerView.layoutManager = LinearLayoutManager(context)
+                val adapter = tittleData?.let { Adapter(it) }
+                recyclerView.adapter = adapter
+
             }
 
             override fun onFailure(call: Call<ProductsData?>, t: Throwable) {
@@ -55,8 +59,8 @@ lateinit var recyclerView:RecyclerView
             }
         })
 
-
         return binding.root
+
     }
 
 }
